@@ -19,10 +19,3 @@ struct UserDetails: Decodable {
     let created_at: String
 }
 
-struct Repo: Decodable {
-    let name: String
-    let git_url: String
-
-    let stargazers_count: Int
-    let forks_count: Int
-}

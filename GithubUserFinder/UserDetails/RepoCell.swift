@@ -10,7 +10,20 @@ import UIKit
 
 class RepoCell: UITableViewCell {
     
-    @IBOutlet weak var repoNameLabel: UILabel!
-    @IBOutlet weak var forksLabel: UILabel!
-    @IBOutlet weak var starsLabel: UILabel!
+    @IBOutlet private weak var repoNameLabel: UILabel!
+    @IBOutlet private weak var forksLabel: UILabel!
+    @IBOutlet private weak var starsLabel: UILabel!
+    
+    private enum constants {
+        static let forkText = " Fork"
+        static let forksText = " Forks"
+        static let starText = " Star"
+        static let starsText = " Stars"
+    }
+    
+    func populate(repo: Repo) {
+        repoNameLabel.text = repo.name
+        forksLabel.text = "\(repo.forks_count)" + "\(repo.forks_count > 1 ? "\(constants.forksText)" : "\(constants.forkText)")"
+        starsLabel.text = "\(repo.stargazers_count)" + "\(repo.stargazers_count > 1 ? "\(constants.starsText)" : "\(constants.starText)")"
+    }
 }

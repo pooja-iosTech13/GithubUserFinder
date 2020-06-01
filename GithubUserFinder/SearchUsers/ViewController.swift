@@ -8,14 +8,26 @@
 
 import UIKit
 import Alamofire
-import AlamofireImage
 
 class ViewController: UIViewController {
     
     @IBOutlet private weak var tableView: UITableView!
     @IBOutlet private weak var searchBar: UISearchBar!
     
-    var users: [User] = []
+    //datasource
+    private var users: [User] = [] {
+        didSet {
+            tableView.reloadData()
+        }
+    }
+    
+    private enum constants {
+        static let userCellNibName = "UserCell"
+        static let cellReuseIdentifier = "Cell"
+        static let searchUsersPlaceholderText = "Search Users"
+        static let segueIdentifier = "detailSegue"
+        static let placeholderImageName = "placeholder"
+    }
     
     //MARK:- View life cycle
     override func viewDidLoad() {
@@ -33,30 +45,23 @@ class ViewController: UIViewController {
     
     //MARK:- Setup
     private func setUpTableView() {
-        tableView.register(UINib(nibName: "UserCell", bundle: nil), forCellReuseIdentifier: "Cell")
+        tableView.register(UINib(nibName: constants.userCellNibName, bundle: nil), forCellReuseIdentifier: constants.cellReuseIdentifier)
     }
     
     private func setupSearchBar() {
-        searchBar.placeholder = "Search Users"
-    }
-    
-    //MARK:- SearchBar Validator
-    var isSearchBarEmpty: Bool {
-        return searchBar.text?.isEmpty ?? true
+        searchBar.placeholder = constants.searchUsersPlaceholderText
     }
     
     private func searchUsers(for name: String) {
-        ServiceManager.getUsers(for: name) { (response) in
+        ServiceManager.getUsers(for: name) {[weak self] (response) in
+            guard let self = self else { return }
             guard let response = response as? SearchResponse else { return }
-            print(response.users)
-            //TODO:- use weak self
             self.users = response.users
-            self.tableView.reloadData()
         }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "detailSegue" {
+        if segue.identifier == constants.segueIdentifier {
             guard let destinationVC = segue.destination as? UserDetailViewController else {
                 return
             }
@@ -73,15 +78,11 @@ extension ViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell: UserCell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as? UserCell else {
+        guard let cell: UserCell = tableView.dequeueReusableCell(withIdentifier: constants.cellReuseIdentifier, for: indexPath) as? UserCell else {
             return UITableViewCell()
         }
         let user = users[indexPath.row]
-        cell.nameLabel.text = user.login
-        let placeholderImage = UIImage(named: "placeholder")
-        if let imageUrl = URL(string: user.avatarUrl) {
-            cell.userImageView.af.setImage(withURL: imageUrl, cacheKey: "CacheUserImageKey\(user.id)", placeholderImage: placeholderImage);
-        }
+        cell.populate(user: user)
         return cell
     }
 }
@@ -89,7 +90,7 @@ extension ViewController: UITableViewDataSource {
 extension ViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        performSegue(withIdentifier: "detailSegue", sender: users[indexPath.row]);
+        performSegue(withIdentifier: constants.segueIdentifier, sender: users[indexPath.row]);
     }
 }
 
@@ -100,8 +101,10 @@ extension ViewController: UISearchBarDelegate {
             searchUsers(for: text)
         } else {
             users = []
-            tableView.reloadData()
         }
     }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.endEditing(true)
+    }
 }
-

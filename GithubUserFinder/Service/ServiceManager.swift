@@ -22,8 +22,9 @@ class ServiceManager {
     
     private static let baseUrl = "https://api.github.com/"
     
-    private static let clientId = "Iv1.1682a472c101a994"
-    private static let clinetSecret = "a972f6ede5905d863a2720c83798041d2e144cea"
+    // Add your client Id and client secret here..
+    private static let clientId = ""
+    private static let clientSecret = ""
     
     private static func getMethod(type: ServiceType) -> String {
         switch type {
@@ -36,9 +37,9 @@ class ServiceManager {
     
     private static func clientIdSecret() -> String {
         //Add your client Id and client secret if you hit max hour limit which is only
-        // 50 request per hour. And enable this.
-        return "&client_id=\(ServiceManager.clientId)&client_secret=\(ServiceManager.clinetSecret)"
-        //return ""
+        // 50-60 request per hour. And enable this.
+        //return "&client_id=\(ServiceManager.clientId)&client_secret=\(ServiceManager.clinetSecret)"
+        return ""
     }
     
     public static func getUsers(for query: String, completion: @escaping CompletionHandler) {

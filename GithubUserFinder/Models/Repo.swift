@@ -7,3 +7,11 @@
 //
 
 import Foundation
+
+struct Repo: Decodable {
+    let name: String
+    let html_url: String
+    
+    let stargazers_count: Int
+    let forks_count: Int
+}

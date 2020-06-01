@@ -7,11 +7,24 @@
 //
 
 import UIKit
+import AlamofireImage
 
 class UserCell: UITableViewCell {
 
-    @IBOutlet weak var userImageView: UIImageView!
+    @IBOutlet private weak var userImageView: UIImageView!
     
-    @IBOutlet weak var nameLabel: UILabel!
-    @IBOutlet weak var repoLable: UILabel!
+    @IBOutlet private weak var nameLabel: UILabel!
+    @IBOutlet private weak var repoLable: UILabel!
+    
+    private enum constants {
+        static let placeholderImageName = "placeholder"
+    }
+    
+    func populate(user: User) {
+        nameLabel.text = user.login
+        let placeholderImage = UIImage(named: constants.placeholderImageName)
+        if let imageUrl = URL(string: user.avatarUrl) {
+            userImageView.af.setImage(withURL: imageUrl, cacheKey: "\(AppConstants.kCacheImagekey)\(user.id)", placeholderImage: placeholderImage);
+        }
+    }
 }
