@@ -1,4 +1,4 @@
-# GithubUserFinder
+# GithubUserFinder iOS Swift
 
 This Project has user search functionality on the first page, User details along with repository list on the second page.
 You also get the option to seach for repository.
